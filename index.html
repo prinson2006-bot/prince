@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vijjeswarapu Prinson | Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161b22;
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --text-main: #e6edf3;
+            --text-dim: #8b949e;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --timeline-line: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            z-index: 1001;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Background Decoration */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, transparent 70%);
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 4rem;
+            background: linear-gradient(to right, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-name {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom right, #fff 30%, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards;
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--text-dim);
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s 0.2s forwards;
+        }
+
+        .hero-buttons {
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s 0.4s forwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px -10px var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -10px var(--primary);
+        }
+
+        /* Main Timeline Layout */
+        .timeline-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            padding: 4rem 2rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--timeline-line);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 6rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--timeline-line);
+            position: relative;
+            transition: 0.5s;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .timeline-item.active .timeline-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--bg-color);
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            transition: 0.3s;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .item-category {
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .item-date {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Skills Grid */
+        .skills-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--timeline-line);
+            transition: 0.3s;
+        }
+
+        .skill-card:hover {
+            border-color: var(--primary);
+            background: var(--accent-glow);
+        }
+
+        .skill-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: #21262d;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            margin: 0.3rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            border: 1px solid var(--timeline-line);
+        }
+
+        /* Contact Section */
+        #contact {
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--card-bg), #0d1117);
+            padding: 3rem;
+            border-radius: 30px;
+            border: 1px solid var(--timeline-line);
+        }
+
+        .contact-info {
+            margin: 2rem 0;
+        }
+
+        .contact-info a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: block;
+            margin: 0.5rem 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            .timeline-dot {
+                left: 30px;
+            }
+            .timeline-item, .timeline-item:nth-child(even) {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding-left: 60px;
+            }
+            .timeline-content {
+                width: 100%;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scroll-progress"></div>
+    <div class="bg-glow"></div>
+
+    <section id="hero">
+        <h1 class="hero-name">VIJJESWARAPU PRINSON</h1>
+        <p class="hero-tagline">Computer Science & Engineering Student | Aspiring Software Architect</p>
+        <div class="hero-buttons">
+            <a href="#about" class="btn btn-primary">Discover Journey</a>
+            <a href="#contact" class="btn" style="border: 1px solid var(--primary); color: var(--primary);">Contact Me</a>
+        </div>
+    </section>
+
+    <section id="about" style="padding: 100px 20px; max-width: 800px; margin: 0 auto; text-align: center;">
+        <h2 class="section-title">About Me</h2>
+        <p style="font-size: 1.25rem; color: var(--text-dim);">
+            Enthusiastic and passionate professional with a positive attitude, eager to learn and grow. 
+            Dedicated to delivering high-quality work, embracing challenges, and contributing to team success.
+        </p>
+    </section>
+
+    <section id="journey" class="timeline-container">
+        <h2 class="section-title">Timeline of Growth</h2>
+        <div class="timeline-line"></div>
+
+        <!-- 3rd Year B.Tech -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Education</span>
+                <span class="item-date">Present</span>
+                <h3>B.Tech - Computer Science</h3>
+                <p>Danekula Institute of Engineering and Technology, Ganguru, Andhra Pradesh</p>
+                <p style="color: var(--primary); margin-top: 10px;">Current Status: 3rd Year Undergrad</p>
+            </div>
+        </div>
+
+        <!-- Project: Pharmacy -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Project</span>
+                <h3>Pharmacy Hospital Website</h3>
+                <p>Designed and developed a management system streamlining pharmaceutical operations and patient hospital interactions using modern web technologies.</p>
+            </div>
+        </div>
+
+        <!-- Intermediate -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Education</span>
+                <span class="item-date">2021 — 2023</span>
+                <h3>Intermediate (MPC)</h3>
+                <p>Sri Chaitanya Junior College, Eluru</p>
+                <div style="margin-top: 10px; font-weight: bold;">Score: 91.7%</div>
+            </div>
+        </div>
+
+        <!-- Project: Gas Sensing -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Project</span>
+                <h3>Gas Detecting System</h3>
+                <p>Engineering project focused on safety automation, utilizing sensors to detect and alert against hazardous gas leakages.</p>
+            </div>
+        </div>
+
+        <!-- SSC -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Education</span>
+                <span class="item-date">Graduated 2021</span>
+                <h3>SSC (Class X)</h3>
+                <p>Oxford School, Eluru</p>
+                <div style="margin-top: 10px; font-weight: bold;">Score: 99%</div>
+            </div>
+        </div>
+
+        <!-- Cyber Security -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <span class="item-category">Social Impact</span>
+                <h3>Cyber Security Awareness</h3>
+                <p>Community service project aimed at educating people about digital safety and common cyber threat mitigation.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="skills-section">
+        <h2 class="section-title">Technical Arsenal</h2>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <h3>Languages</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">C</span>
+                </div>
+            </div>
+            <div class="skill-card">
+                <h3>Web & Database</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">HTML5</span>
+                    <span class="skill-tag">CSS3</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">MySQL</span>
+                    <span class="skill-tag">MongoDB</span>
+                </div>
+            </div>
+            <div class="skill-card">
+                <h3>Tools & Systems</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">VS Code</span>
+                    <span class="skill-tag">Linux</span>
+                    <span class="skill-tag">Windows</span>
+                </div>
+            </div>
+            <div class="skill-card">
+                <h3>Certifications</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">IIT Bombay C Programming</span>
+                    <span class="skill-tag">Infosys Python Foundation</span>
+                    <span class="skill-tag">Infosys DBMS</span>
+                    <span class="skill-tag">Google Gen AI</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title">Start a Conversation</h2>
+        <div class="contact-card">
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Interested in working together or just want to say hi?</p>
+            <div class="contact-info">
+                <a href="mailto:prinson2006@gmail.com">prinson2006@gmail.com</a>
+                <a href="tel:+918919276532">+91 89192 76532</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: #586069;">Located in Andhra Pradesh, India</p>
+        </div>
+    </section>
+
+    <footer style="padding: 40px; text-align: center; color: #484f58; font-size: 0.8rem; border-top: 1px solid var(--timeline-line);">
+        &copy; 2024 Vijjeswarapu Prinson. Built with Passion.
+    </footer>
+
+    <script>
+        // Scroll Progress Handler
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + '%';
+        });
+
+        // Intersection Observer for Timeline Animation
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            timelineObserver.observe(item);
+        });
+
+        // Smooth Scroll Logic for all internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Simple Parallax for Background Glow
+        window.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.bg-glow');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            glow.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #1e1b4b 0%, transparent 70%)`;
+        });
+    </script>
+</body>
+</html>
